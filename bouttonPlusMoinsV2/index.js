@@ -3555,7 +3555,9 @@ var PS = {};
       return prop(dictIsProp)("type");
   };                                                          
   var placeholder = prop(Halogen_HTML_Core.isPropString)("placeholder");
+  var name = prop(Halogen_HTML_Core.isPropString)("name");        
   var disabled = prop(Halogen_HTML_Core.isPropBoolean)("disabled");
+  exports["name"] = name;
   exports["type_"] = type_;
   exports["disabled"] = disabled;
   exports["required"] = required;
@@ -3660,24 +3662,29 @@ var PS = {};
           if (action instanceof Data_Either.Right) {
               return Halogen_HTML_Elements.p_([ Halogen_HTML_Elements.button([ Halogen_HTML_Events.onClick(Data_Function["const"](new Data_Maybe.Just(action.value0))) ])([ Halogen_HTML_Core.text(message) ]) ]);
           };
-          throw new Error("Failed pattern match at Button (line 84, column 5 - line 91, column 83): " + [ action.constructor.name ]);
+          throw new Error("Failed pattern match at Button (line 92, column 5 - line 99, column 83): " + [ action.constructor.name ]);
+      };
+  };
+  var renderInput = function (nom) {
+      return function (textHolder) {
+          return Halogen_HTML_Elements.input([ Halogen_HTML_Properties.type_(Halogen_HTML_Core.isPropInputType)(DOM_HTML_Indexed_InputType.InputText.value), Halogen_HTML_Properties.name(nom), Halogen_HTML_Events.onValueInput(function (str) {
+              return new Data_Maybe.Just(new ChoisitValeur(str));
+          }), Halogen_HTML_Properties.required(true), Halogen_HTML_Properties.placeholder(textHolder) ]);
       };
   };
   var view = function (v) {
       if (v.stage instanceof Accueil) {
-          return Halogen_HTML_Elements.div_([ Halogen_HTML_Elements.h2_([ Halogen_HTML_Core.text("Compteur version 2") ]), Halogen_HTML_Elements.input([ Halogen_HTML_Properties.type_(Halogen_HTML_Core.isPropInputType)(DOM_HTML_Indexed_InputType.InputText.value), Halogen_HTML_Events.onValueInput(function (str) {
-              return new Data_Maybe.Just(new ChoisitValeur(str));
-          }), Halogen_HTML_Properties.required(true), Halogen_HTML_Properties.placeholder("entrez la valeur de l'incr\xe9ment") ]), (function () {
+          return Halogen_HTML_Elements.div_([ Halogen_HTML_Elements.h2_([ Halogen_HTML_Core.text("Compteur version 2") ]), (function () {
               if (v.stage.value0 instanceof Data_Either.Right) {
-                  return renderNextButton(new Data_Either.Right(PasseDeLaccueilAuCompteur.value))("Cliquez pour continuer");
+                  return Halogen_HTML_Elements.div_([ renderInput("correct")("entrez la valeur de l'incr\xe9ment"), renderNextButton(new Data_Either.Right(PasseDeLaccueilAuCompteur.value))("Cliquez pour continuer") ]);
               };
               if (v.stage.value0 instanceof Data_Either.Left && v.stage.value0.value0 instanceof PasDeSaisie) {
-                  return renderNextButton(new Data_Either.Left("Entrez une valeur"))("Cliquez pour continuer");
+                  return Halogen_HTML_Elements.div_([ renderInput("incorrect")("entrez la valeur de l'incr\xe9ment"), renderNextButton(new Data_Either.Left("Entrez une valeur"))("Cliquez pour continuer") ]);
               };
               if (v.stage.value0 instanceof Data_Either.Left && v.stage.value0.value0 instanceof SaisieIncorrecte) {
-                  return renderNextButton(new Data_Either.Left("Entrez une valeure enti\xe8re"))("Cliquez pour continuer");
+                  return Halogen_HTML_Elements.div_([ renderInput("incorrect")("entrez la valeur de l'incr\xe9ment"), renderNextButton(new Data_Either.Left("Entrez une valeure enti\xe8re"))("Cliquez pour continuer") ]);
               };
-              throw new Error("Failed pattern match at Button (line 58, column 7 - line 64, column 93): " + [ v.stage.value0.constructor.name ]);
+              throw new Error("Failed pattern match at Button (line 52, column 8 - line 71, column 14): " + [ v.stage.value0.constructor.name ]);
           })() ]);
       };
       if (v.stage instanceof Compteur) {
@@ -3738,7 +3745,7 @@ var PS = {};
                   return $30;
               });
           };
-          throw new Error("Failed pattern match at Button (line 98, column 7 - line 103, column 72): " + [ v1.constructor.name ]);
+          throw new Error("Failed pattern match at Button (line 116, column 7 - line 121, column 72): " + [ v1.constructor.name ]);
       };
       if (v instanceof PasseDeLaccueilAuCompteur) {
           return Control_Monad_State_Class.modify_(Halogen_Query_HalogenM.monadStateHalogenM)(function (etat) {
@@ -3784,7 +3791,7 @@ var PS = {};
               return initialState;
           });
       };
-      throw new Error("Failed pattern match at Button (line 95, column 1 - line 95, column 63): " + [ v.constructor.name ]);
+      throw new Error("Failed pattern match at Button (line 113, column 1 - line 113, column 63): " + [ v.constructor.name ]);
   };
   var component = Halogen_Component.mkComponent({
       initialState: Data_Function["const"](initialState),

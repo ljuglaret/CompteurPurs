@@ -3,7 +3,7 @@ module Button  where
 import Prelude
 
 import Data.Const (Const)
-import Data.Either (Either(..), note)
+import Data.Either (Either(..))
 import Data.Int (fromString)
 import Data.Maybe (Maybe(..))
 import Data.String(trim)
@@ -47,37 +47,42 @@ initialState = {  stage : Accueil (Left PasDeSaisie)}
 view :: forall m. State -> H.ComponentHTML Msg () m
 view {stage  :  Accueil debut} = 
   HH.div_[
-      HH.h2_[ HH.text "Compteur version 2" ]
-      ,HH.input [
-        HP.type_ HP.InputText
-        , HE.onValueInput(\str  -> Just (ChoisitValeur str))
-        ,HP.required true
-        ,HP.placeholder "entrez la valeur de l'incrément"
-      ]
-    ,
-      case debut of 
-        Right entier          ->
-            renderNextButton (Right PasseDeLaccueilAuCompteur  )    "Cliquez pour continuer"
-        Left PasDeSaisie      ->
-            renderNextButton (Left "Entrez une valeur")             "Cliquez pour continuer"
+    HH.h2_[ HH.text "Compteur version 2" ]
+     ,case debut of
+        Right entier    ->
+          HH.div_ [
+            renderInput "correct" "entrez la valeur de l'incrément"
+            ,renderNextButton (Right PasseDeLaccueilAuCompteur  )    "Cliquez pour continuer"
+          ]
+        Left PasDeSaisie    ->
+          HH.div_ [
+            renderInput "incorrect" "entrez la valeur de l'incrément"
+            ,renderNextButton (Left "Le champs de l'incrément est vide")             "Cliquez pour continuer"
+          ]
+            
         Left SaisieIncorrecte ->
-            renderNextButton (Left "Entrez une valeure entière"  )  "Cliquez pour continuer"
-    ]
+            HH.div_ [
+              renderInput "incorrect" "entrez la valeur de l'incrément"
+              ,renderNextButton (Left "Entrez une valeure entière"  )  "Cliquez pour continuer"
+            ]
+      ]
+    
 
 view { stage : Compteur model  _} =
-    HH.div_
-      [HH.div_[ HH.h3_
-          [
-           HH.button
-                  [ HE.onClick $ Just <<< const Diminue ]
-                  [ HH.text "Diminue" ]
+  HH.div_ [
+    HH.div_ [
+      HH.h3_ [
+        HH.button
+          [ HE.onClick $ Just <<< const Diminue ]
+          [ HH.text "Diminue" ]
         , HH.text $ show model.compteur 
         , HH.button
-              [ HE.onClick $ Just <<< const Augmente ]
-              [ HH.text "Augmente" ]
+            [ HE.onClick $ Just <<< const Augmente ]
+            [ HH.text "Augmente" ]
       ]
       ,renderNextButton ( Right Recommencer ) "Recommencer"
-      ]]
+      ]
+    ]
 
 renderNextButton :: forall m. Either String Msg -> String -> H.ComponentHTML Msg() m
 renderNextButton action message =
@@ -90,6 +95,16 @@ renderNextButton action message =
         HH.p_ [
           HH.button [ HE.onClick <<< const $ Just action' ]   [ HH.text message ]]
 
+renderInput :: forall m. String -> String -> HH.HTML m Msg
+renderInput nom textHolder =
+  HH.input
+    [
+      HP.type_ HP.InputText
+      , HP.name nom
+      , HE.onValueInput(\str  -> Just (ChoisitValeur str))
+      , HP.required true
+      , HP.placeholder textHolder
+    ]
 
 
 update :: forall m. Msg -> H.HalogenM State Msg () Void m Unit
