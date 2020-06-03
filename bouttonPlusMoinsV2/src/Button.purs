@@ -6,6 +6,7 @@ import Data.Const (Const)
 import Data.Either (Either(..), note)
 import Data.Int (fromString)
 import Data.Maybe (Maybe(..))
+import Data.String(trim)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
@@ -55,12 +56,13 @@ view {stage  :  Accueil debut} =
       ]
     ,
       case debut of 
-        Right entier -> renderNextButton (Right PasseDeLaccueilAuCompteur  ) "Cliquez pour continuer"
-        Left PasDeSaisie -> renderNextButton (Left "Entrez une valeur"  ) "Cliquez pour continuer"
-        Left SaisieIncorrecte -> renderNextButton (Left "Entrez une valeure entière"  ) "Cliquez pour continuer"
-
-   
-  ]
+        Right entier          ->
+            renderNextButton (Right PasseDeLaccueilAuCompteur  )    "Cliquez pour continuer"
+        Left PasDeSaisie      ->
+            renderNextButton (Left "Entrez une valeur")             "Cliquez pour continuer"
+        Left SaisieIncorrecte ->
+            renderNextButton (Left "Entrez une valeure entière"  )  "Cliquez pour continuer"
+    ]
 
 view { stage : Compteur model  _} =
     HH.div_
@@ -93,11 +95,11 @@ renderNextButton action message =
 update :: forall m. Msg -> H.HalogenM State Msg () Void m Unit
 update (ChoisitValeur increment) = 
   
-      case fromString increment of 
+      case fromString (trim increment)  of 
         Just entier ->  H.modify_ _ {stage = Accueil (Right entier)}
         Nothing ->
-          if increment == ""
-          then H.modify_ _ { stage = Accueil  (Left PasDeSaisie)}
+          if trim increment == ""
+          then H.modify_ _  { stage = Accueil  (Left PasDeSaisie)}
           else H.modify_ _  { stage = Accueil  (Left SaisieIncorrecte)}
 
 update PasseDeLaccueilAuCompteur = 
